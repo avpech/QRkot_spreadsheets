@@ -44,7 +44,8 @@ async def set_user_permissions(
             fileId=spreadsheet_id,
             json=permissions_body,
             fields='id'
-        ))
+        )
+    )
 
 
 async def spreadsheets_update_value(
