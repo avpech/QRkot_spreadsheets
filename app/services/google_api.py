@@ -6,22 +6,27 @@ from app.core.config import settings
 from app.core.custom_types import ProjectClosedDict
 
 FORMAT = '%Y/%m/%d %H:%M:%S'
+DRIVE_SERVICE = 'drive'
 DRIVE_VERSION = 'v3'
+SHEET_SERVICE = 'sheets'
 SHEET_VERSION = 'v4'
+SHEETS = [
+    {'properties': {'sheetType': 'GRID',
+                    'sheetId': 0,
+                    'title': 'Лист1',
+                    'gridProperties': {'rowCount': 100,
+                                       'columnCount': 11}}}
+]
 
 
 async def spreadsheets_create(wrapper_services: Aiogoogle) -> str:
     """Создание гугл-таблицы."""
     now_date_time = datetime.now().strftime(FORMAT)
-    service = await wrapper_services.discover('sheets', SHEET_VERSION)
+    service = await wrapper_services.discover(SHEET_SERVICE, SHEET_VERSION)
     spreadsheet_body = {
         'properties': {'title': f'Отчет на {now_date_time}',
                        'locale': settings.locale},
-        'sheets': [{'properties': {'sheetType': 'GRID',
-                                   'sheetId': 0,
-                                   'title': 'Лист1',
-                                   'gridProperties': {'rowCount': 100,
-                                                      'columnCount': 11}}}]
+        'sheets': SHEETS
     }
     response = await wrapper_services.as_service_account(
         service.spreadsheets.create(json=spreadsheet_body)
@@ -38,7 +43,7 @@ async def set_user_permissions(
     permissions_body = {'type': 'user',
                         'role': 'writer',
                         'emailAddress': settings.email}
-    service = await wrapper_services.discover('drive', DRIVE_VERSION)
+    service = await wrapper_services.discover(DRIVE_SERVICE, DRIVE_VERSION)
     await wrapper_services.as_service_account(
         service.permissions.create(
             fileId=spreadsheet_id,
@@ -55,7 +60,7 @@ async def spreadsheets_update_value(
 ) -> None:
     """Обновление данных в гугл-таблице."""
     now_date_time = datetime.now().strftime(FORMAT)
-    service = await wrapper_services.discover('sheets', SHEET_VERSION)
+    service = await wrapper_services.discover(SHEET_SERVICE, SHEET_VERSION)
     table_values = [
         ['Отчет от', now_date_time],
         ['Топ проектов по скорости закрытия'],
