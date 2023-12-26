@@ -36,7 +36,7 @@ pip install -r requirements.txt
 - В корне проекта создать файл .env со следующими переменными
 
 ```bash
-DATABASE_URL=<путь к базе данных в формате dialect+driver://username:password@host:port/database>
+DATABASE_URL=sqlite+aiosqlite:///./fastapi.db
 SECRET=<набор произвольных символов>
 ```
 Примечание: если не указать DATABASE_URL, то будет использовано зачение по умолчанию `sqlite+aiosqlite:///./fastapi.db`
